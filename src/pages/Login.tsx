@@ -1,13 +1,63 @@
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from "@/components/ui/button"
-
-import { Eye, EyeOff, ArrowRight } from "lucide-react"
+import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2'
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { SignIn } from '@/type/sign';
+import Input from '@/components/ui/InputField';
+import useAuthStore from '../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import { listed } from '@/constant/listed';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { login, error , user} = useAuthStore();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignIn>({
+    defaultValues: { email: '', password: '' },
+    resolver: yupResolver(
+      yup.object().shape({
+        email: yup
+          .string()
+          .required('email required')
+          .email('email invalid format'),
+        password: yup.string().required('password required'),
+      })
+    ),
+  });
+
+  useEffect(() => {
+    if (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error,
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (user) {
+      navigate(listed.selectRole);
+    }
+  }, [user, navigate]);
+
+  const onSubmit = async (formData: SignIn) => {
+   await login(formData);
+  
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-r from-cyan-500 to-blue-500 flex items-center justify-center p-4 md:p-8">
+    <div
+      className="min-h-screen bg-linear-to-r from-cyan-500 to-blue-500 flex items-center justify-center p-4 md:p-8"
+      data-theme="light"
+    >
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="grid md:grid-cols-2 gap-6 p-6 md:p-8 lg:p-12">
           {/* Left Column - Welcome Content */}
@@ -42,20 +92,25 @@ const Login = () => {
               <h2 className="text-2xl font-semibold">Login</h2>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-2">
                 <label htmlFor="email">Email</label>
-                <Input type="email" placeholder="Email" required />
+                <Input
+                  type="text"
+                  placeholder="Email"
+                  error={errors?.email}
+                  {...register('email')}
+                />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password">
-                  Password
-                </label>
+                <label htmlFor="password">Password</label>
                 <div className="relative">
                   <Input
-                     type={!showPassword ? "text" : "password"} placeholder="Password" required 
-                   
+                    type={!showPassword ? 'text' : 'password'}
+                    placeholder="Password"
+                    error={errors?.password}
+                    {...register('password')}
                   />
                   <button
                     type="button"
@@ -71,24 +126,14 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <a
-                  href="/forgot-password"
-                  className="text-sm text-[#00B5D1] hover:text-[#008fa6] transition-colors"
-                >
-                  Forgot password?
-                </a>
-              </div>
-
-              <Button
+              <button
                 type="submit"
-                className="w-full text-base bg-[#00B5D1] hover:bg-[#008fa6] transition-colors"
+                className="w-full btn text-white bg-[#00B5D1] hover:bg-[#008fa6] transition-colors"
               >
                 Login
                 <ArrowRight className="w-4 ml-2" />
-              </Button>
+              </button>
             </form>
-
           </div>
         </div>
       </div>

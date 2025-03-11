@@ -15,7 +15,9 @@ type InputProps = {
     | "search"
     | "tel"
     | "text"
+    | "password"
     | "time";
+    
   placeholder?: string;
   className?: string;
   icon?: string;

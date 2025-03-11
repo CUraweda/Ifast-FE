@@ -25,14 +25,12 @@ const HistorySubmissions: React.FC = () => {
     <div className='w-full'>
 
     <div className="overflow-x-auto p-4">
-      <table className="table w-full table-zebra">
+      <table className="table w-full table-zebra table-auto sm:table-fixed">
         <thead>
           <tr>
             <th>No</th>
             <th>Submission Name</th>
-           
             <th>Type</th>
-
             <th>Status</th>
           </tr>
         </thead>
