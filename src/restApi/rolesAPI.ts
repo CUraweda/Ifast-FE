@@ -2,7 +2,6 @@
 import apiClient from './apiClient';
 import { Role } from './utils/user';
 
-
 export interface ListRoleData {
   total_items: number;
   page: number;
@@ -17,7 +16,21 @@ export interface rolesResponse {
   data: ListRoleData;
 }
 
-export const getRoles = async (): Promise<rolesResponse> => {
-  const response = await apiClient.get<rolesResponse>('/api/v1/roles/show-all');
+export interface RoleRes {
+  name: string;
+  code: string;
+  description: string;
+}
+
+export const getRoles = async (payload?: string): Promise<rolesResponse> => {
+  const response = await apiClient.get<rolesResponse>(`/api/v1/roles/show-all?${payload}`);
+  return response.data;
+};
+
+export const createRoles = async (data: RoleRes): Promise<rolesResponse> => {
+  const response = await apiClient.post<rolesResponse>(
+    `/api/v1/roles/create`,
+    data
+  );
   return response.data;
 };

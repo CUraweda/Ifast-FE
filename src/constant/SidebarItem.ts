@@ -53,7 +53,7 @@ export const sidebarList = [
       },
       {
         label: "Hierarchy",
-        path: listed.submissionList
+        path: listed.hirarky
       },
       {
         label: "Submission Setting",

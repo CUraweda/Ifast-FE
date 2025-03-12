@@ -8,5 +8,6 @@ export const listed = {
     history: "/history",
     user: "/user",
     roles: "/roles",
+    hirarky: "/hirarky",
    
   };

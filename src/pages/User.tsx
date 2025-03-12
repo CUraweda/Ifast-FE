@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react';
 import userStore from '../store/userStore';
 import divisionStore from '../store/divisionStore';
 import rolesStore from '../store/rolesStore';
+import HirarkyStore from '../store/hirarkyStore';
 import Swal from 'sweetalert2';
-import { Role, User } from '@/restApi/utils/user';
+import { Hirarky, HirarkyLevel, Role, User } from '@/restApi/utils/user';
 import { BsPencil, BsPersonAdd, BsTrash } from 'react-icons/bs';
 import { VscTypeHierarchySub } from 'react-icons/vsc';
 import Modal, { closeModal, openModal } from '@/components/ui/Modal';
@@ -22,15 +23,25 @@ interface type {
 }
 
 const UserPage = () => {
-  const { userList, allUser, error, createUser, addRoleUser , removeRoleUser} = userStore();
+  const {
+    userList,
+    allUser,
+    error,
+    createUser,
+    addRoleUser,
+    removeRoleUser,
+    addHirarkyUser,
+  } = userStore();
   const { division, getAll } = divisionStore();
   const { roles, getAllRoles } = rolesStore();
+  const { hirarkyList, getAllHirarky } = HirarkyStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [Division, setDivision] = useState<type[]>([]);
   const [triger, setTriger] = useState<boolean>(false);
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+  const [selectedHirarky, setSelectedHirarky] = useState<Hirarky>();
   const [idUser, setIdUser] = useState<string>('');
 
   useEffect(() => {
@@ -77,16 +88,33 @@ const UserPage = () => {
     setIdUser(id);
     setSelectedRoles((prevSelectedRoles) => [...prevSelectedRoles, ...roles]);
   };
+  const getHirarky = async (hirarky: Hirarky, id: string) => {
+    await getAllHirarky();
+    openModal('add-hirarky');
+    setIdUser(id);
+    setSelectedHirarky(hirarky);
+  };
 
   const addRole = async () => {
     const data = {
       roles: selectedRoles.map((item) => item.id),
     };
-
     closeModal('add-role');
     await addRoleUser(idUser, data);
     setTriger(!triger);
+    setSelectedRoles([]);
   };
+
+  const addHirarky = async () => {
+    const data = {
+      hirarkyId: selectedHirarky?.id,
+    };
+    closeModal('add-hirarky');
+    await addHirarkyUser(idUser, data);
+    setTriger(!triger);
+    setSelectedRoles([]);
+  };
+
   const handleDeleteRole = async (idUser: string, idRole: string) => {
     const data = {
       roles: [idRole],
@@ -101,8 +129,8 @@ const UserPage = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-         await removeRoleUser(idUser, data)
-         setTriger(!triger);
+        await removeRoleUser(idUser, data);
+        setTriger(!triger);
       }
     });
   };
@@ -222,6 +250,7 @@ const UserPage = () => {
                         <button
                           className="btn btn-sm btn-ghost tooltip tooltip-accent"
                           data-tip="Hierarchy"
+                          onClick={() => getHirarky(item.hirarky, item.id)}
                         >
                           <VscTypeHierarchySub />
                         </button>
@@ -345,7 +374,7 @@ const UserPage = () => {
           <table className="table table-auto table-zebra sm:table-fixed w-full">
             <thead>
               <tr>
-                <th>
+                <th className="w-12">
                   <input
                     type="checkbox"
                     className="checkbox checkbox-accent"
@@ -404,6 +433,65 @@ const UserPage = () => {
           <button
             className="btn btn-primary text-white btn-sm"
             onClick={addRole}
+          >
+            Kirim
+          </button>
+        </div>
+      </Modal>
+      <Modal id="add-hirarky" width="w-11/12 max-w-5xl">
+        <h3 className="font-bold text-lg">Hierarchy</h3>
+        <div className="overflow-x-auto w-full mt-3">
+          <table className="table table-auto table-zebra sm:table-fixed w-full">
+            <thead>
+              <tr>
+                <th className="w-12"></th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {hirarkyList?.items.map((item: Hirarky, index: number) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedHirarky?.id === item.id}
+                      className="checkbox checkbox-accent"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedHirarky(item);
+                        }
+                      }}
+                    />
+                  </td>
+                  <td>{item.name}</td>
+                  <td className="flex flex-col">
+                    {item.levels.map((item: HirarkyLevel, i: number) => (
+                      <span key={i}>
+                        level {item.sequence} - {item.requiredRole} (
+                        {item.approver.fullName})
+                      </span>
+                    ))}
+                  </td>
+                  <td>{item.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="w-full flex justify-end gap-3 mt-5">
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => {
+              closeModal('add-hirarky'), setSelectedHirarky(undefined);
+            }}
+          >
+            Close
+          </button>
+          <button
+            className="btn btn-primary text-white btn-sm"
+            onClick={addHirarky}
           >
             Kirim
           </button>

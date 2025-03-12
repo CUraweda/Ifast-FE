@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC } from 'react';
 
 interface Props {
   id: string;
@@ -30,6 +30,9 @@ const Modal: FC<Props> = ({ id, children, width, onClose = () => {} }) => {
         <div className={`modal-box bg-neutral ${width} `}>
           <div>{children}</div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </div>
   );

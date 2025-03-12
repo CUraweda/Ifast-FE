@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import getErrorMessage from '@/restApi/apiHelper';
-import { addRoleIntoUsers, createUsers, getAllUsers, getDataUser, removeRoleUsers } from '@/restApi/userAPI';
+import { addHirarkyIntoUsers, addRoleIntoUsers, createUsers, getAllUsers, getDataUser, removeRoleUsers } from '@/restApi/userAPI';
 import {
+  HirarkyReq,
   ListUsersData,
   ListUsersResponse,
   RoleReq,
@@ -20,6 +21,7 @@ interface AuthState {
   allUser: (payload: string) => Promise<void>;
   createUser: (data: addUser) => Promise<void>;
   addRoleUser: (id: string, data: RoleReq) => Promise<void>;
+  addHirarkyUser: (id: string, data: HirarkyReq) => Promise<void>;
   removeRoleUser: (id: string, data: RoleReq) => Promise<void>;
 }
 
@@ -97,6 +99,34 @@ const userStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       await addRoleIntoUsers(id, data);
+      set({
+        isLoading: false,
+      });
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "saved",
+        text: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: getErrorMessage(error, 'failed. Please try again.'),
+       
+      });
+      set({
+        error: getErrorMessage(error, 'failed. Please try again.'),
+        isLoading: false,
+      });
+    }
+  },
+  addHirarkyUser: async (id:string, data: HirarkyReq) => {
+    set({ isLoading: true, error: null });
+    try {
+      await addHirarkyIntoUsers(id, data);
       set({
         isLoading: false,
       });

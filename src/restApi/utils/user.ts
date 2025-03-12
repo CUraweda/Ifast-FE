@@ -19,6 +19,7 @@ export interface Role {
     requiredRole: string;
     approverId: string;
     createdAt: string;
+    approver: User
   }
   
   export interface Hirarky {
@@ -72,4 +73,8 @@ export interface ListUsersResponse {
 
 export interface RoleReq {
   roles: string[];
+}
+
+export interface HirarkyReq {
+  hirarkyId: string | undefined;
 }

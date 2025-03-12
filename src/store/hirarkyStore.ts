@@ -1,52 +1,43 @@
 import { create } from 'zustand';
 import getErrorMessage from '@/restApi/apiHelper';
-import {
-  getRoles,
-  ListRoleData,
-  RoleRes,
-  rolesResponse,
-  createRoles,
-} from '@/restApi/rolesAPI';
+import { createHirarky, getHirarky, HirarkyReq } from '@/restApi/hirarkyAPI';
+import { hirarkyResponse, ListHirarkyData } from '@/restApi/hirarkyAPI';
 import Swal from 'sweetalert2';
 
-interface AuthState {
-  roles: ListRoleData | null;
+interface State {
+  hirarkyList: ListHirarkyData | null;
   isLoading: boolean;
   error: string | null;
-  getAllRoles: (payload?: string) => Promise<void>;
-  createRoles: (data: RoleRes) => Promise<void>;
+  getAllHirarky: (payload?: string) => Promise<void>;
+  createHirarky: (data: HirarkyReq) => Promise<void>;
 }
 
-const divisionStore = create<AuthState>((set) => ({
-  roles: null,
+const divisionStore = create<State>((set) => ({
+  hirarkyList: null,
   isLoading: false,
   error: null,
 
-  getAllRoles: async (payload?: string) => {
+  getAllHirarky: async (payload?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response: rolesResponse = await getRoles(payload);
+      const response: hirarkyResponse = await getHirarky(payload);
       set({
-        roles: response.data,
+        hirarkyList: response.data,
         isLoading: false,
       });
     } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: getErrorMessage(error, 'failed. Please try again.'),
-       
-      });
       set({
         error: getErrorMessage(error, 'failed. Please try again.'),
         isLoading: false,
       });
     }
   },
-  createRoles: async (data: RoleRes ) => {
+
+  createHirarky: async (data: HirarkyReq) => {
     set({ isLoading: true, error: null });
     try {
-      await createRoles(data);
+      await createHirarky(data);
+
       set({
         isLoading: false,
       });

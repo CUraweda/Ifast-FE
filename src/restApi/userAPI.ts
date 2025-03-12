@@ -1,6 +1,6 @@
 import { addUser } from '@/type/user';
 import apiClient from './apiClient';
-import { ListUsersResponse, RoleReq, UserResponse } from './utils/user';
+import { HirarkyReq, ListUsersResponse, RoleReq, UserResponse } from './utils/user';
 
 export const getDataUser = async (): Promise<UserResponse> => {
   const response = await apiClient.get<UserResponse>('/api/v1/user/show-me');
@@ -44,6 +44,17 @@ export const removeRoleUsers = async (
   const response = await apiClient.delete<ListUsersResponse>(
     `/api/v1/user/remove-roles/${id}`,
     {data}
+  );
+  return response.data;
+};
+
+export const addHirarkyIntoUsers = async (
+  id: string,
+  data: HirarkyReq
+): Promise<ListUsersResponse> => {
+  const response = await apiClient.put<ListUsersResponse>(
+    `/api/v1/user/update-hirarky/${id}`,
+    data
   );
   return response.data;
 };

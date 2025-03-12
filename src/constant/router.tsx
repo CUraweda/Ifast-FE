@@ -11,6 +11,7 @@ import Accountability from '@/pages/Accountability';
 import History from '@/pages/history';
 import User from '@/pages/User';
 import Roles from '@/pages/Roles';
+import Hirarky from '@/pages/Hirarky';
 
 const Route: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const Route: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
       {
         path: listed.roles,
         element: <Roles />,
+      },
+      {
+        path: listed.hirarky,
+        element: <Hirarky />,
       },
      
     ],
