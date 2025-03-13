@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Shield, ChevronRight, UserCog, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import userStore from '../store/userStore';
+import userStore from '../store/user.store';
 import Swal from 'sweetalert2';
 import { BsPerson } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';

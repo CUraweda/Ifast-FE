@@ -1,6 +1,6 @@
 import {create} from 'zustand';
-import getErrorMessage from '@/restApi/apiHelper';
-import { getDivision, ListdivisionData, Response } from '@/restApi/divisionAPI';
+import getErrorMessage from '@/restApi/helper.api';
+import { getDivision, ListdivisionData, Response } from '@/restApi/division.api';
 
 interface AuthState {
   division: ListdivisionData | null;

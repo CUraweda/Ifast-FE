@@ -2,7 +2,7 @@ import Input from '@/components/ui/InputField';
 import Pagination from '@/components/ui/Pagination';
 import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import hirarkyStore from '../store/hirarkyStore';
+import hirarkyStore from '../store/hirarky.store';
 import { Hirarky, HirarkyLevel, Role, User } from '@/restApi/utils/user';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import Modal, { closeModal, openModal } from '@/components/ui/Modal';
@@ -10,7 +10,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { addHirarky } from '@/type/hirarky';
 import { addHirarkyShcema } from '@/schema/hirarky';
-import userStore from '../store/userStore';
+import userStore from '../store/user.store';
 
 const PageHirarky = () => {
   const { hirarkyList, getAllHirarky, createHirarky } = hirarkyStore();
@@ -163,6 +163,7 @@ const PageHirarky = () => {
                 <thead>
                   <tr>
                     <th>Level</th>
+                    <th>Role</th>
                     <th>Approver</th>
                     <th>Action</th>
                   </tr>
@@ -170,6 +171,7 @@ const PageHirarky = () => {
                 <tbody>
                   <tr>
                     <td>1</td>
+                    <td>Adasd</td>
                     <td>Adasd</td>
                     <td>
                       <button
@@ -248,7 +250,7 @@ const PageHirarky = () => {
                   />
                 </th>
                 <th>Full Name</th>
-                <th>Role</th>
+               
               </tr>
             </thead>
             <tbody>
@@ -273,18 +275,7 @@ const PageHirarky = () => {
                     />
                   </td>
                   <td>{item.fullName}</td>
-                  <td className="flex flex-wrap gap-0.5">
-                    <select
-                      defaultValue="Pick a language"
-                      className="select select-accent"
-                    >
-                      {item.roles.map((role: Role, i: number) => (
-                        <option value={role.code} key={i}>
-                          {role.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+                  
                 </tr>
               ))}
             </tbody>

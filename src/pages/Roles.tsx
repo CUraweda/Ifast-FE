@@ -2,7 +2,7 @@ import Input from '@/components/ui/InputField';
 import Pagination from '@/components/ui/Pagination';
 import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import rolesStore from '../store/rolesStore';
+import rolesStore from '../store/roles.store';
 import { Role } from '@/restApi/utils/user';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import Modal, { closeModal, openModal } from '@/components/ui/Modal';

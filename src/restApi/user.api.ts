@@ -1,5 +1,5 @@
 import { addUser } from '@/type/user';
-import apiClient from './apiClient';
+import apiClient from './base.api';
 import { HirarkyReq, ListUsersResponse, RoleReq, UserResponse } from './utils/user';
 
 export const getDataUser = async (): Promise<UserResponse> => {

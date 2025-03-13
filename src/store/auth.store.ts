@@ -1,6 +1,6 @@
 import {create} from 'zustand';
-import { loginAPI, LoginCredentials, LoginResponse, User } from '@/restApi/authAPI';
-import getErrorMessage from '@/restApi/apiHelper';
+import { loginAPI, LoginCredentials, LoginResponse, refreshTokenAPI, User } from '@/restApi/auth.api';
+import getErrorMessage from '@/restApi/helper.api';
 
 interface AuthState {
   user: User | null;
@@ -9,6 +9,7 @@ interface AuthState {
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
+  refreshToken: () => Promise<string | null>;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -24,10 +25,11 @@ const useAuthStore = create<AuthState>((set) => ({
       const { user, token } = response.data;
       set({
         user,
-        token,
+        token : token.access_token,
         isLoading: false,
       });
-      localStorage.setItem('token', token);
+      sessionStorage.setItem('token', token.access_token)
+      localStorage.setItem('refresh', token.refresh_token);
     } catch (error: any) {
       set({
         error: getErrorMessage(error, 'failed. Please try again.'),
@@ -39,6 +41,25 @@ const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     set({ user: null, token: null, error: null, isLoading: false });
     localStorage.removeItem('token');
+  },
+
+  refreshToken: async () => {
+    try {
+      const refreshToken = localStorage.getItem('refresh') ?? ''
+      const response: LoginResponse = await refreshTokenAPI(refreshToken);
+      const { token } = response.data;
+      set({ token: token.access_token });
+
+      sessionStorage.setItem('token', token.access_token)
+      localStorage.setItem('refresh', token.refresh_token);
+
+      return token.access_token;
+
+    } catch (error) {
+      set({ user: null, token: null });
+      sessionStorage.removeItem('token');
+      return null;
+    }
   },
 }));
 

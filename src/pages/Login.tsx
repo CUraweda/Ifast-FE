@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { SignIn } from '@/type/sign';
 import Input from '@/components/ui/InputField';
-import useAuthStore from '../store/useAuthStore';
+import useAuthStore from '../store/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { listed } from '@/constant/listed';
 

@@ -1,5 +1,5 @@
 // src/api/authAPI.ts
-import apiClient from './apiClient';
+import apiClient from './base.api';
 import { Hirarky } from './utils/user';
 
 export interface ListHirarkyData {

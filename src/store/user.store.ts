@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import getErrorMessage from '@/restApi/apiHelper';
-import { addHirarkyIntoUsers, addRoleIntoUsers, createUsers, getAllUsers, getDataUser, removeRoleUsers } from '@/restApi/userAPI';
+import getErrorMessage from '@/restApi/helper.api';
+import { addHirarkyIntoUsers, addRoleIntoUsers, createUsers, getAllUsers, getDataUser, removeRoleUsers } from '@/restApi/user.api';
 import {
   HirarkyReq,
   ListUsersData,

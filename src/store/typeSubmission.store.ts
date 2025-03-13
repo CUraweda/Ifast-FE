@@ -1,41 +1,40 @@
 import { create } from 'zustand';
-import getErrorMessage from '@/restApi/apiHelper';
-import {
-  getRoles,
-  ListRoleData,
-  RoleRes,
-  rolesResponse,
-  createRoles,
-} from '@/restApi/rolesAPI';
+import getErrorMessage from '@/restApi/helper.api';
 import Swal from 'sweetalert2';
+import {
+  createType,
+  getType,
+  ListTypeData,
+  typeRes,
+  typeResponse,
+} from '@/restApi/typeSubmission.api';
 
 interface AuthState {
-  roles: ListRoleData | null;
+  typeSubmission: ListTypeData | null;
   isLoading: boolean;
   error: string | null;
-  getAllRoles: (payload?: string) => Promise<void>;
-  createRoles: (data: RoleRes) => Promise<void>;
+  getAllType: (payload?: string) => Promise<void>;
+  createType: (data: typeRes) => Promise<void>;
 }
 
-const divisionStore = create<AuthState>((set) => ({
-  roles: null,
+const typeSubmissionStore = create<AuthState>((set) => ({
+  typeSubmission: null,
   isLoading: false,
   error: null,
 
-  getAllRoles: async (payload?: string) => {
+  getAllType: async (payload?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response: rolesResponse = await getRoles(payload);
+      const response: typeResponse = await getType(payload);
       set({
-        roles: response.data,
+        typeSubmission: response.data,
         isLoading: false,
       });
     } catch (error: any) {
       Swal.fire({
-        icon: "error",
-        title: "Oops...",
+        icon: 'error',
+        title: 'Oops...',
         text: getErrorMessage(error, 'failed. Please try again.'),
-       
       });
       set({
         error: getErrorMessage(error, 'failed. Please try again.'),
@@ -43,10 +42,10 @@ const divisionStore = create<AuthState>((set) => ({
       });
     }
   },
-  createRoles: async (data: RoleRes ) => {
+  createType: async (data: typeRes) => {
     set({ isLoading: true, error: null });
     try {
-      await createRoles(data);
+      await createType(data);
       set({
         isLoading: false,
       });
@@ -60,10 +59,9 @@ const divisionStore = create<AuthState>((set) => ({
       });
     } catch (error: any) {
       Swal.fire({
-        icon: "error",
-        title: "Oops...",
+        icon: 'error',
+        title: 'Oops...',
         text: getErrorMessage(error, 'failed. Please try again.'),
-       
       });
       set({
         error: getErrorMessage(error, 'failed. Please try again.'),
@@ -73,4 +71,4 @@ const divisionStore = create<AuthState>((set) => ({
   },
 }));
 
-export default divisionStore;
+export default typeSubmissionStore;

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import getErrorMessage from '@/restApi/apiHelper';
-import { createHirarky, getHirarky, HirarkyReq } from '@/restApi/hirarkyAPI';
-import { hirarkyResponse, ListHirarkyData } from '@/restApi/hirarkyAPI';
+import getErrorMessage from '@/restApi/helper.api';
+import { createHirarky, getHirarky, HirarkyReq } from '@/restApi/hirarky.api';
+import { hirarkyResponse, ListHirarkyData } from '@/restApi/hirarky.api';
 import Swal from 'sweetalert2';
 
 interface State {
