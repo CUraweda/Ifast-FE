@@ -54,4 +54,5 @@ export interface createSubmission {
     activity: string,
     description: string,
     typeId: string
+    status: string
 }

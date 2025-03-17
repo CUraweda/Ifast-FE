@@ -23,7 +23,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       <div className="w-full">
         <select
           ref={ref}
-          className={twMerge("select select-bordered w-full", className)}
+          className={twMerge(
+            `w-full select select-bordered ${error ? "border-red-600" : ""} `,
+            className
+          )}
+          
           defaultValue={defaultValue ?? ""}
           {...rest}
         >

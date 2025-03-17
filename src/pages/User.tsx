@@ -363,7 +363,7 @@ const UserPage = () => {
             className="btn btn-primary text-white btn-sm"
             onClick={handleSubmit(onSubmit)}
           >
-            Kirim
+            Submit
           </button>
         </div>
       </Modal>
@@ -434,7 +434,7 @@ const UserPage = () => {
             className="btn btn-primary text-white btn-sm"
             onClick={addRole}
           >
-            Kirim
+            Submit
           </button>
         </div>
       </Modal>
@@ -493,7 +493,7 @@ const UserPage = () => {
             className="btn btn-primary text-white btn-sm"
             onClick={addHirarky}
           >
-            Kirim
+            Submit
           </button>
         </div>
       </Modal>

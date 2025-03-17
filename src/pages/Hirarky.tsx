@@ -294,7 +294,7 @@ const PageHirarky = () => {
             className="btn btn-primary text-white btn-sm"
             // onClick={addRole}
           >
-            Kirim
+            Submit
           </button>
         </div>
       </Modal>

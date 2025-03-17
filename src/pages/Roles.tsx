@@ -176,7 +176,7 @@ const Roles = () => {
             className="btn btn-primary text-white btn-sm"
             onClick={handleSubmit(onSubmit)}
           >
-            Kirim
+            Submit
           </button>
         </div>
       </Modal>

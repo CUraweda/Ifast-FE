@@ -5,10 +5,16 @@ import { Download, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import typeStore from '../store/typeSubmission.store';
 import submissionStore from '../store/submissions.store';
+import projectStore from '../store/project.store';
 import { submissionType } from '@/restApi/utils/submission';
 import { formatDateTime } from '@/helpers/formatDate';
 import { formatRupiah } from '@/helpers/formatRupiah';
 import { BsPencil, BsTrash } from 'react-icons/bs';
+import Modal, { closeModal, openModal } from '@/components/ui/Modal';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { addSubmission } from '@/type/submission';
+import { addSubmissionShcema } from '@/schema/submission';
 
 interface type {
   label: string;
@@ -17,12 +23,14 @@ interface type {
 
 const SubmissionsList = () => {
   const { typeSubmission, getAllType } = typeStore();
-  const { submissionList, getAllSubmission } = submissionStore();
+  const { projectList, getAllProject } = projectStore();
+  const { submissionList, getAllSubmission , createSubmission} = submissionStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [triger, setTriger] = useState<boolean>(false);
   const [dataType, setDataType] = useState<type[]>([]);
+  const [dataProject, setDataProject] = useState<type[]>([]);
 
   useEffect(() => {
     const payload: string = `limit=${itemsPerPage}&page=${currentPage}&search=activity:${search}`;
@@ -38,7 +46,14 @@ const SubmissionsList = () => {
       }));
       setDataType(type);
     }
-  }, [typeSubmission]);
+    if (projectList) {
+      const project = projectList.items.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      setDataProject(project);
+    }
+  }, [typeSubmission, projectList]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -47,7 +62,36 @@ const SubmissionsList = () => {
     setItemsPerPage(newItemsPerPage);
   };
 
-  console.log(submissionList);
+  const handleAddTriger = async () => {
+    const payload: string = `limit=50`;
+    await getAllProject(payload);
+
+    openModal('add-submission');
+  };
+
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      reset,
+    } = useForm<addSubmission>({
+      defaultValues: {
+        projectId: '',
+        date: "",
+        activity: "",
+        description: "",
+        typeId: "",
+      },
+      resolver: yupResolver(addSubmissionShcema),
+    });
+
+    const onSubmit: SubmitHandler<addSubmission> = async (value) => {
+      const data = {...value, status: "DRAFT"}
+      await createSubmission(data)
+      closeModal('add-submission');
+      // reset();
+      setTriger(!triger);
+    };
 
   return (
     <>
@@ -97,7 +141,10 @@ const SubmissionsList = () => {
                 // {...register("email")}
               />
             </fieldset>
-            <button className="btn btn-secondary mb-1">
+            <button
+              className="btn btn-secondary mb-1"
+              onClick={handleAddTriger}
+            >
               <Plus />
               Add
             </button>
@@ -128,7 +175,15 @@ const SubmissionsList = () => {
                       <td>{item.number}</td>
                       <td>{formatDateTime(item.date)}</td>
                       <td>{formatRupiah(item.totalAmount)}</td>
-                      <td><button className={`btn btn-xs btn-dash ${item?.approval[0]?.status === "REJECT" ? "btn-error" : "btn-accent"}`}>{`${item?.approval[0]?.status} by ${item?.approval[0]?.requiredRole}`}</button></td>
+                      <td>
+                        <button
+                          className={`btn btn-xs btn-dash ${
+                            item?.approval[0]?.status === 'REJECT'
+                              ? 'btn-error'
+                              : 'btn-accent'
+                          }`}
+                        >{`${item?.approval[0]?.status} by ${item?.approval[0]?.requiredRole}`}</button>
+                      </td>
                       <td>
                         <div className="flex">
                           <button
@@ -163,7 +218,7 @@ const SubmissionsList = () => {
           </div>
           <div className="w-full mt-5 flex justify-end">
             <Pagination
-              totalItems={submissionList?.total_items ?? 0}
+              totalItems={300}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}
               onPageChange={handlePageChange}
@@ -172,6 +227,75 @@ const SubmissionsList = () => {
           </div>
         </div>
       </div>
+
+      <Modal id="add-submission">
+        <span className="text-lg font-bold">Submission</span>
+        <div className="mt-3">
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">type</legend>
+            <Select
+              data={dataType}
+              className="w-full"
+              placeholder="Type"
+              error={errors?.typeId}
+              {...register('typeId')}
+            />
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Project</legend>
+            <Select
+              data={dataProject}
+              className="w-full"
+              placeholder="Project"
+              error={errors?.projectId}
+              {...register('projectId')}
+            />
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Date</legend>
+            <Input
+              type="date"
+              placeholder="Date"
+              error={errors?.date}
+              {...register('date')}
+            />
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Activity</legend>
+            <Input
+              type="text"
+              placeholder="Activity"
+              error={errors?.activity}
+              {...register('activity')}
+            />
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Description</legend>
+            <textarea
+               className={`textarea w-full ${errors.description && 'border-red-500' }` }
+              placeholder="Description"
+              {...register('description')}
+            />
+            {errors.description && <span className='text-red-500'>{errors.description.message}</span>}
+          </fieldset>
+        </div>
+        <div className="w-full flex justify-end gap-3 mt-5">
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => {
+              closeModal('add-submission');
+            }}
+          >
+            Close
+          </button>
+          <button
+            className="btn btn-primary text-white btn-sm"
+            onClick={handleSubmit(onSubmit)}
+          >
+            Submit
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };

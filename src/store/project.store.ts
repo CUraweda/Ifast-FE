@@ -1,34 +1,30 @@
 import { create } from 'zustand';
 import getErrorMessage from '@/restApi/helper.api';
-import {
-  createSubmissions,
-getAllSubmission
-} from '@/restApi/submission.api';
 import Swal from 'sweetalert2';
-import { createSubmission, submissionList, submissionResponse } from '@/restApi/utils/submission';
-import { listed } from '@/constant/listed';
+import { createProject, getProjectCode, ListProjectData, ProjectRes, ProjectResponse } from '@/restApi/project.api';
 
 interface AuthState {
-  submissionList: submissionList | null;
+  projectList: ListProjectData | null;
   isLoading: boolean;
   error: string | null;
-  getAllSubmission: (payload?: string) => Promise<void>;
-  createSubmission: (data: createSubmission) => Promise<void>;
+  getAllProject: (payload?: string) => Promise<void>;
+  createProject: (data: ProjectRes) => Promise<void>;
 }
 
-const submissionStore = create<AuthState>((set) => ({
-  submissionList: null,
+const projectStore = create<AuthState>((set) => ({
+  projectList: null,
   isLoading: false,
   error: null,
 
-  getAllSubmission: async (payload?: string) => {
+  getAllProject: async (payload?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response: submissionResponse = await getAllSubmission(payload);
+      const response: ProjectResponse = await getProjectCode(payload);
       set({
-        submissionList: response.data,
+        projectList: response.data,
         isLoading: false,
       });
+      
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -42,14 +38,21 @@ const submissionStore = create<AuthState>((set) => ({
       });
     }
   },
-  createSubmission: async (data: createSubmission ) => {
+  createProject: async (data: ProjectRes ) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await createSubmissions(data);
+      await createProject(data);
       set({
         isLoading: false,
       });
-     window.location.href = listed.dashboard
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'saved',
+        text: 'Your work has been saved',
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -65,4 +68,4 @@ const submissionStore = create<AuthState>((set) => ({
   },
 }));
 
-export default submissionStore;
+export default projectStore;
