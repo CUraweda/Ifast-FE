@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { addHirarky } from '@/type/hirarky';
 import { addHirarkyShcema } from '@/schema/hirarky';
 import userStore from '../store/user.store';
+import { HirarkyReq } from '@/restApi/hirarky.api';
 
 const PageHirarky = () => {
   const { hirarkyList, getAllHirarky, createHirarky } = hirarkyStore();
@@ -18,14 +19,21 @@ const PageHirarky = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
+  const [searchUser, setSearchUser] = useState<string>('');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [triger, setTriger] = useState<boolean>(false);
-  const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+  const [selectedApprover, setSelectedApprover] = useState<any[]>([]);
+  const [trigerSelect, setTrigerSelect] = useState<boolean>(false)
 
   useEffect(() => {
     const payload: string = `limit=${itemsPerPage}&page=${currentPage}&search=name:${search}`;
     getAllHirarky(payload);
   }, [itemsPerPage, currentPage, search, triger]);
+
+  useEffect(() => {
+    const payload: string = `limit=100&search=fullName:${searchUser}`;
+    allUser(payload);
+  }, [searchUser]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -35,6 +43,8 @@ const PageHirarky = () => {
   };
 
   const handleAdd = (props: string) => {
+    const payload: string = `limit=100&search=fullName:${searchUser}`;
+    allUser(payload);
     openModal(props);
   };
 
@@ -52,10 +62,24 @@ const PageHirarky = () => {
   });
 
   const onSubmit: SubmitHandler<addHirarky> = async (value) => {
-    // await createHirarky(value);
-    closeModal('add-role');
+
+    const dataReq: HirarkyReq = {
+      name: value.name,
+      description: value.description,
+      levels: selectedApprover.map(({ id, ...rest }) => rest)
+    }
+    console.log(selectedApprover);
+    
+    if (!selectedApprover || selectedApprover.length === 0) {
+      setTrigerSelect(true);
+      return;
+    } 
+    
+    await createHirarky(dataReq);
+    closeModal('add-hirarky');
     reset();
     setTriger(!triger);
+    setTrigerSelect(false);
   };
 
   return (
@@ -144,66 +168,105 @@ const PageHirarky = () => {
         </div>
       </div>
 
-      <Modal id="add-hirarky">
+      <Modal id="add-hirarky" width="w-3/4 max-w-2xl">
         <h3 className="font-bold text-lg">Hierarchy</h3>
         <div>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Name</legend>
             <Input
               type="text"
-              placeholder="USER"
-              // error={errors?.code}
-              // {...register('code')}
+              placeholder="Approval Level 1"
+              error={errors?.name}
+              {...register('name')}
             />
           </fieldset>
-          <fieldset className="fieldset bg-base-100 border border-base-300 p-4 rounded-md">
-            <legend className="fieldset-legend">Approver Level</legend>
-            <div className="overflow-x-auto w-full">
+          <fieldset className={`fieldset bg-base-100 border  p-4 rounded-md ${trigerSelect ? 'border-red-500' : 'border-base-300'}`} >
+            <legend className="fieldset-legend">Approver</legend>
+            <fieldset className="fieldset ">
+              <legend className="fieldset-legend">Cari</legend>
+              <Input
+                type="text"
+                placeholder="Search Name"
+                value={searchUser}
+                onChange={(e) => setSearchUser(e.target.value)}
+              />
+            </fieldset>
+            <div className="overflow-x-auto w-full max-h-96 overflow-auto">
+
               <table className="table table-auto table-zebra sm:table-fixed w-full">
                 <thead>
                   <tr>
-                    <th>Level</th>
                     <th>Role</th>
                     <th>Approver</th>
-                    <th>Action</th>
+                    <th>Level</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Adasd</td>
-                    <td>Adasd</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-ghost tooltip tooltip-error"
-                        data-tip="delete"
-                      >
-                        <BsTrash />
-                      </button>
-                    </td>
-                  </tr>
+                  {userList?.items.map((item: User) =>
+                    item.roles.map((roles: Role, j: number) => (
+                      <tr key={j}>
+                        <td>
+                          <div className="flex gap-2" key={j}>
+                            <input
+                              type="checkbox"
+                              checked={selectedApprover.some(
+                                (role) =>
+                                  role.id === roles.id &&
+                                  role.approverId === item.id
+                              )}
+                              className="checkbox checkbox-accent"
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedApprover([
+                                    ...selectedApprover,
+                                    {
+                                      id: roles.id,
+                                      sequence: selectedApprover.length + 1,
+                                      requiredRole: roles.code,
+                                      approverId: item.id,
+                                    },
+                                  ]);
+                                } else {
+                                  setSelectedApprover(
+                                    selectedApprover.filter(
+                                      (role) =>
+                                        !(
+                                          role.id === roles.id &&
+                                          role.approverId === item.id
+                                        )
+                                    )
+                                  );
+                                }
+                              }}
+                            />
+                            <span>{roles.name}</span>
+                          </div>
+                        </td>
+                        <td>{item.fullName}</td>
+                        <td>
+                          {selectedApprover.find(
+                            (role) =>
+                              role.id === roles.id &&
+                              role.approverId === item.id
+                          )?.sequence || ''}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
-            <div className="w-full flex justify-end">
-              <button
-                className="btn btn-xs btn-secondary tooltip tooltip-info"
-                data-tip="add approver"
-                onClick={() => {
-                  openModal('approver'), allUser('');
-                }}
-              >
-                <Plus />
-              </button>
-            </div>
           </fieldset>
+          {
+            trigerSelect && 
+          <span className='text-xs text-red-500'>approver is required</span>
+          }
 
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Description</legend>
             <textarea
-              className={`textarea w-full ${
-                errors.description && 'border-red-500'
-              }`}
+              className={`textarea w-full ${errors.description && 'border-red-500'
+                }`}
               placeholder="Description"
               {...register('description')}
             />
@@ -230,74 +293,6 @@ const PageHirarky = () => {
         </div>
       </Modal>
 
-      <Modal id="approver">
-        <h3 className="font-bold text-lg">Users</h3>
-        <div className="overflow-x-auto w-full mt-3">
-          <table className="table table-auto table-zebra sm:table-fixed w-full">
-            <thead>
-              <tr>
-                <th className="w-12">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-accent"
-                    // onChange={(e) => {
-                    //   if (e.target.checked) {
-                    //     setSelectedRoles(roles?.items ?? []);
-                    //   } else {
-                    //     setSelectedRoles([]);
-                    //   }
-                    // }}
-                  />
-                </th>
-                <th>Full Name</th>
-               
-              </tr>
-            </thead>
-            <tbody>
-              {userList?.items.map((item: User, index: number) => (
-                <tr key={index}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={selectedRoles.some(
-                        (role) => role.id === item.id
-                      )}
-                      className="checkbox checkbox-accent"
-                      // onChange={(e) => {
-                      //   if (e.target.checked) {
-                      //     setSelectedRoles([...selectedRoles, item]);
-                      //   } else {
-                      //     setSelectedRoles(
-                      //       selectedRoles.filter((role) => role.id !== item.id)
-                      //     );
-                      //   }
-                      // }}
-                    />
-                  </td>
-                  <td>{item.fullName}</td>
-                  
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="w-full flex justify-end gap-3 mt-5">
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={() => {
-              closeModal('approver'), setSelectedRoles([]);
-            }}
-          >
-            Close
-          </button>
-          <button
-            className="btn btn-primary text-white btn-sm"
-            // onClick={addRole}
-          >
-            Submit
-          </button>
-        </div>
-      </Modal>
     </>
   );
 };

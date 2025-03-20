@@ -3,6 +3,7 @@ export const listed = {
     selectRole: "/select-role",
     dashboard: "/dashboard",
     submissionList: "/submission-list",
+    submissionDetail: "/submission-detail",
     debtList: "/debt-list",
     accountability: "/Accountability",
     history: "/history",

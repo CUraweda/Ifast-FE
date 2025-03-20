@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect } from 'react';
+import { useState, FC, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { Outlet } from 'react-router-dom';
@@ -35,6 +35,7 @@ const LayoutAdmin: FC = () => {
     }, 100);
   };
 
+
   return (
     <div
     className="relative h-screen w-full overflow-x-hidden"
@@ -63,6 +64,9 @@ const LayoutAdmin: FC = () => {
         </div>
         <div className="flex-1 overflow-y-auto">
           <Outlet />
+         <div className='w-full flex justify-center my-5'>
+          <a href="http://curaweda.com" target="_blank" rel="noopener noreferrer">  &copy; PT Curaweda Palagan Innotech @{new Date().getFullYear()}</a>
+         </div>
         </div>
       </div>
     </div>

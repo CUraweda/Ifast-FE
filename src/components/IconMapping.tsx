@@ -7,9 +7,10 @@ import { MdOutlineMessage, MdOutlineTableChart } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import { GoTasklist } from "react-icons/go";
+import React from "react";
 // tambahkan import untuk ikon lainnya di sini
 
-export const iconMapping: { [key: string]: JSX.Element } = {
+export const iconMapping: { [key: string]: React.ReactElement } = {
   "<BsFillHouseFill />": <BsFillHouseFill />,
   "<FaMoneyBillWave />": <FaMoneyBillWave />,
   "<IoPersonSharp />": <IoPersonSharp />,

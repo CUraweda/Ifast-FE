@@ -10,6 +10,7 @@ const [isAuthenticated, setAuth] = useState(true)
 
   if(!isAuthenticated){
     navigate('/')
+    setAuth(false)
     return
   }
   

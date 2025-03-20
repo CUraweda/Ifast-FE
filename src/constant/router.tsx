@@ -5,13 +5,14 @@ import RoleSelection from '@/pages/SelectRole';
 import Dashboard from '@/pages/Dashboard';
 import Layout from '@/components/Layout';
 import ProtectedLayout from './ProtectedLayout';
-import SubmissionsList from '@/pages/SubmissionsList';
+import SubmissionsList from '@/pages/submissions/SubmissionsList';
 import DebtList from '@/pages/DebtList';
 import Accountability from '@/pages/Accountability';
 import History from '@/pages/history';
 import User from '@/pages/User';
 import Roles from '@/pages/Roles';
 import Hirarky from '@/pages/Hirarky';
+import SubmissionDetail from '@/pages/submissions/SubmissionDetail';
 
 const Route: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const Route: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
       {
         path: listed.submissionList,
         element: <SubmissionsList />,
+      },
+      {
+        path: listed.submissionDetail,
+        element: <SubmissionDetail />,
       },
       {
         path: listed.debtList,

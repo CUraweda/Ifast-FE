@@ -1,45 +1,63 @@
 export interface submissionType {
+  id: string;
+  userId: string;
+  number: string;
+  createdAt: string;
+  updatedAt: string;
+  projectId: string;
+  date: string;
+  activity: string;
+  description: string;
+  status: string;
+  typeId: string;
+  approval: approvalType[];
+  type: typeSubmissionType;
+  project: typeSubmissionType;
+  totalAmount: number;
+  submissionDetail: detailSubmission[]
+}
+
+export interface detailSubmission {
     id: string,
-    userId : string,
-    number: string,
-    createdAt: string,
-    updatedAt : string,
-    projectId: string,
-    date: string,
-    activity: string,
-    description: string,
-    status: string,
-    typeId: string,
-    approval: approvalType[]
-    type: typeSubmissionType
-    totalAmount: number
+    submissionId: string
+    name: string,
+    qty : number
+    category: category
+    amount: number
+    evidence: string
+}
+
+export interface category {
+    id: string
+    name: string,
+    code: string
 }
 
 export interface approvalType {
-    id: string,
-    submissionId : string,
-    sequence: number,
-    requiredRole: string,
-    status: string,
-    approverId: string,
-    comment?: string
-    createdAt: string
+  id: string;
+  submissionId: string;
+  sequence: number;
+  requiredRole: string;
+  status: string;
+  approverId: string;
+  comment?: string;
+  createdAt: string;
 }
 
 export interface typeSubmissionType {
-    id: string,
-    name: string,
-    code: string,
-    description: string,
-    createdAt: string
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  createdAt: string;
 }
 
 export interface submissionList {
-    total_items: number;
-    page: number;
-    limit: number;
-    total_pages: number;
-    items: submissionType[];
+  total_items: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+  items: submissionType[];
 }
 
 export interface submissionResponse {
@@ -47,12 +65,25 @@ export interface submissionResponse {
   message: string;
   data: submissionList;
 }
+export interface getOneSubmissionResponse {
+  status: boolean;
+  message: string;
+  data: submissionType;
+}
 
 export interface createSubmission {
-    projectId: string,
-    date: string,
-    activity: string,
-    description: string,
-    typeId: string
-    status: string
+  projectId: string;
+  date: string;
+  activity: string;
+  description: string;
+  typeId: string;
+  status: string;
+}
+
+export interface submissionDetail {
+  submissionId?: string |  undefined;
+  name: string;
+  qty: number;
+  categoryId: string;
+  amount: number;
 }

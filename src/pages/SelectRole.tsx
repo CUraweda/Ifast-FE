@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Shield, ChevronRight, UserCog, User } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import userStore from '../store/user.store';
@@ -31,6 +31,7 @@ export default function RoleSelection() {
     localStorage.setItem('role', selectedRole ?? '');
     navigate(listed.dashboard)
   };
+
   return (
     <div className="min-h-screen bg-linear-to-r from-cyan-500 to-blue-500 flex items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-3xl">
@@ -49,17 +50,17 @@ export default function RoleSelection() {
               {user?.roles.map((role) => {
                 return (
                   <button
-                    key={role.id}
-                    onClick={() => setSelectedRole(role.id)}
+                    key={role.code}
+                    onClick={() => setSelectedRole(role.code)}
                     className={`relative flex items-center gap-4 p-4 h-24 rounded-lg border-2 transition-all duration-200 group hover:border-[#00B5D1] hover:shadow-md cursor-pointer ${
-                      selectedRole === role.id
+                      selectedRole === role.code
                         ? 'border-[#00B5D1] bg-[#00B5D1]/5'
                         : 'border-gray-200'
                     }`}
                   >
                     <div
                       className={`p-3 rounded-lg ${
-                        selectedRole === role.id
+                        selectedRole === role.code
                           ? 'bg-[#00B5D1] text-white'
                           : 'bg-gray-100 text-gray-500 group-hover:bg-[#00B5D1]/10'
                       }`}
@@ -76,7 +77,7 @@ export default function RoleSelection() {
 
                     <ChevronRight
                       className={`w-5 h-5 transition-transform ${
-                        selectedRole === role.id
+                        selectedRole === role.code
                           ? 'text-[#00B5D1] translate-x-1'
                           : 'text-gray-400'
                       }`}

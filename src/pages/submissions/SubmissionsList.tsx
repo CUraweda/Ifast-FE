@@ -3,9 +3,9 @@ import Pagination from '@/components/ui/Pagination';
 import Select from '@/components/ui/Select';
 import { Download, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import typeStore from '../store/typeSubmission.store';
-import submissionStore from '../store/submissions.store';
-import projectStore from '../store/project.store';
+import typeStore from '../../store/typeSubmission.store';
+import submissionStore from '../../store/submissions.store';
+import projectStore from '../../store/project.store';
 import { submissionType } from '@/restApi/utils/submission';
 import { formatDateTime } from '@/helpers/formatDate';
 import { formatRupiah } from '@/helpers/formatRupiah';
@@ -15,6 +15,9 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { addSubmission } from '@/type/submission';
 import { addSubmissionShcema } from '@/schema/submission';
+import { CiViewList } from 'react-icons/ci';
+import { useNavigate } from 'react-router-dom';
+import { listed } from '@/constant/listed';
 
 interface type {
   label: string;
@@ -24,13 +27,15 @@ interface type {
 const SubmissionsList = () => {
   const { typeSubmission, getAllType } = typeStore();
   const { projectList, getAllProject } = projectStore();
-  const { submissionList, getAllSubmission , createSubmission} = submissionStore();
+  const { submissionList, getAllSubmission, createSubmission } =
+    submissionStore();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [triger, setTriger] = useState<boolean>(false);
   const [dataType, setDataType] = useState<type[]>([]);
   const [dataProject, setDataProject] = useState<type[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const payload: string = `limit=${itemsPerPage}&page=${currentPage}&search=activity:${search}`;
@@ -69,30 +74,33 @@ const SubmissionsList = () => {
     openModal('add-submission');
   };
 
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-      reset,
-    } = useForm<addSubmission>({
-      defaultValues: {
-        projectId: '',
-        date: "",
-        activity: "",
-        description: "",
-        typeId: "",
-      },
-      resolver: yupResolver(addSubmissionShcema),
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<addSubmission>({
+    defaultValues: {
+      projectId: '',
+      date: '',
+      activity: '',
+      description: '',
+      typeId: '',
+    },
+    resolver: yupResolver(addSubmissionShcema),
+  });
 
-    const onSubmit: SubmitHandler<addSubmission> = async (value) => {
-      const data = {...value, status: "DRAFT"}
-      await createSubmission(data)
-      closeModal('add-submission');
-      // reset();
-      setTriger(!triger);
-    };
+  const onSubmit: SubmitHandler<addSubmission> = async (value) => {
+    const data = { ...value, status: 'DRAFT' };
+    await createSubmission(data);
+    closeModal('add-submission');
+    reset();
+    setTriger(!triger);
+  };
 
+  const handleDetail = (id: string) => {
+    navigate(`${listed.submissionDetail}?id=${id}`);
+  };
   return (
     <>
       <div className="w-full p-3">
@@ -137,8 +145,8 @@ const SubmissionsList = () => {
               <Input
                 type="text"
                 placeholder="Search"
-                // error={errors?.email}
-                // {...register("email")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </fieldset>
             <button
@@ -156,10 +164,10 @@ const SubmissionsList = () => {
         </div>
         <div className="mt-3 flex flex-col bg-neutral p-3 rounded shadow">
           <div className="overflow-x-auto w-full">
-            <table className="table">
+            <table className="table table-auto table-zebra sm:table-fixed w-full">
               <thead>
                 <tr>
-                  <th>No</th>
+                  <th className="w-10">No</th>
                   <th>Number</th>
                   <th>Date</th>
                   <th>Total Amount</th>
@@ -176,33 +184,46 @@ const SubmissionsList = () => {
                       <td>{formatDateTime(item.date)}</td>
                       <td>{formatRupiah(item.totalAmount)}</td>
                       <td>
-                        <button
-                          className={`btn btn-xs btn-dash ${
-                            item?.approval[0]?.status === 'REJECT'
-                              ? 'btn-error'
-                              : 'btn-accent'
-                          }`}
-                        >{`${item?.approval[0]?.status} by ${item?.approval[0]?.requiredRole}`}</button>
+                        {item.status === 'DRAFT' && (
+                          <button className="btn btn-xs btn-info btn-dash">
+                            {item.status}
+                          </button>
+                        )}
+                        {item.status !== 'DRAFT' && (
+                          <button
+                            className={`btn btn-xs btn-dash ${
+                              item?.approval[0]?.status === 'REJECT'
+                                ? 'btn-error'
+                                : 'btn-accent'
+                            }`}
+                          >{`${item?.approval[0]?.status} ${
+                            item.approval[0]?.status === 'APPROVED'
+                              ? ''
+                              : ` by ${item?.approval[0]?.requiredRole}`
+                          }`}</button>
+                        )}
                       </td>
                       <td>
                         <div className="flex">
                           <button
+                            className={`btn btn-sm  btn-ghost tooltip tooltip-info`}
+                            data-tip="detail submission"
+                            onClick={() => handleDetail(item.id)}
+                          >
+                            <CiViewList />
+                          </button>
+                          <button
                             className={`btn btn-sm  btn-ghost tooltip tooltip-warning ${
-                              item?.approval[0]?.sequence === 1 &&
-                              item?.approval[0]?.status !== 'APPROVED'
-                                ? ''
-                                : 'btn-disabled'
+                              item.status !== 'DRAFT' ? 'btn-disabled' : ''
                             }`}
                             data-tip="edit"
                           >
                             <BsPencil />
                           </button>
+
                           <button
                             className={`btn btn-sm  btn-ghost tooltip tooltip-error ${
-                              item?.approval[0]?.sequence === 1 &&
-                              item?.approval[0]?.status !== 'APPROVED'
-                                ? ''
-                                : 'btn-disabled'
+                              item.status !== 'DRAFT' ? 'btn-disabled' : ''
                             }`}
                             data-tip="delete"
                           >
@@ -218,7 +239,7 @@ const SubmissionsList = () => {
           </div>
           <div className="w-full mt-5 flex justify-end">
             <Pagination
-              totalItems={300}
+              totalItems={submissionList?.total_items ?? 0}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}
               onPageChange={handlePageChange}
@@ -272,11 +293,15 @@ const SubmissionsList = () => {
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Description</legend>
             <textarea
-               className={`textarea w-full ${errors.description && 'border-red-500' }` }
+              className={`textarea w-full ${
+                errors.description && 'border-red-500'
+              }`}
               placeholder="Description"
               {...register('description')}
             />
-            {errors.description && <span className='text-red-500'>{errors.description.message}</span>}
+            {errors.description && (
+              <span className="text-red-500">{errors.description.message}</span>
+            )}
           </fieldset>
         </div>
         <div className="w-full flex justify-end gap-3 mt-5">

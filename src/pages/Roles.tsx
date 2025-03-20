@@ -47,6 +47,7 @@ const Roles = () => {
     },
     resolver: yupResolver(addRoleShcema),
   });
+  
   const onSubmit: SubmitHandler<addRole> = async (value) => {
     await createRoles(value);
     closeModal('add-role');
@@ -82,7 +83,7 @@ const Roles = () => {
         </div>
         <div className="mt-3 flex flex-col bg-neutral p-3 rounded shadow">
           <div className="overflow-x-auto w-full">
-            <table className="table">
+          <table className="table table-auto table-zebra sm:table-fixed w-full">
               <thead>
                 <tr>
                   <th>No</th>

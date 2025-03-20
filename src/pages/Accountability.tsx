@@ -2,7 +2,6 @@ import Input from '@/components/ui/InputField';
 import Pagination from '@/components/ui/Pagination';
 import Select from '@/components/ui/Select';
 import { Download, Plus } from 'lucide-react';
-import React from 'react';
 
 const Accountability = () => {
   const type = [
@@ -10,10 +9,10 @@ const Accountability = () => {
     { label: 'F4', value: 'F4' },
     { label: 'F5', value: 'F5' },
   ];
-  const handlePageChange = (page: number) => {
+  const handlePageChange = () => {
     // setCurrentPage(page);
   };
-  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+  const handleItemsPerPageChange = () => {
     // setItemsPerPage(newItemsPerPage);
   };
   return (
