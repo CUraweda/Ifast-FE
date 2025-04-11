@@ -15,6 +15,7 @@ import { addSubmissionDetailShcema } from '@/schema/submissionDetail';
 import submissionDetailStore from '../../store/submissionsDetail.store';
 import Select from '@/components/ui/Select';
 import { detailSubmission } from '@/restApi/utils/submission';
+import Swal from 'sweetalert2';
 
 interface type {
   label: string;
@@ -86,6 +87,22 @@ const SubmissionDetail = () => {
     setTriger(!triger)
   };
 
+  const trigersubmission = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleSubmitSubmission()
+      }
+    });
+  }
+
   return (
     <div className="w-full p-3">
       <div className="w-full">
@@ -140,7 +157,7 @@ const SubmissionDetail = () => {
           <div className="w-full flex justify-end gap-2">
             <div className="flex gap-2">
              
-              <button className={`btn btn-accent btn-sm ${submissionData?.status === "DRAFT" ? "" : "btn-disabled"}`} onClick={handleSubmitSubmission}>Submit</button>
+              <button className={`btn btn-accent btn-sm ${submissionData?.status === "DRAFT" ? "" : "btn-disabled"}`} onClick={trigersubmission}>Submit</button>
             </div>
           </div>
           <div className="w-full flex flex-col mt-4 overflow-x-auto overflow-y-hidden">
