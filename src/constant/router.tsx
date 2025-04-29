@@ -67,6 +67,7 @@ const Route: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
         path: listed.hirarky,
         element: <Hirarky />,
       },
+      
      
     ],
   },

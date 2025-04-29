@@ -29,5 +29,6 @@ export const iconMapping: { [key: string]: React.ReactElement } = {
   "<CiMoneyCheck1 />" : <CiMoneyCheck1 />,
   "<GoTasklist />" : <GoTasklist />,
   "<FaListCheck />" : <FaListCheck />,
+  
   // tambahkan pemetaan untuk ikon lainnya di sini
 };

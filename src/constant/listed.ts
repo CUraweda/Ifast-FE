@@ -10,5 +10,5 @@ export const listed = {
     user: "/user",
     roles: "/roles",
     hirarky: "/hirarky",
-   
+  
   };

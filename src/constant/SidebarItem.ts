@@ -5,66 +5,75 @@ export const sidebarList = [
     label: 'Dashboard',
     path: listed.dashboard,
     icon: '<BsFillHouseFill />',
-    subMenu: false,
     subLabel: [],
   },
   {
     label: 'Submissions',
     path: '',
     icon: '<GoTasklist />',
-    subMenu: true,
     subLabel: [
       {
         label: "Submission List",
-        path: listed.submissionList
+        path: listed.submissionList,
+        permission: ['submissionList']
       },
       {
         label: "Debt List",
-        path: listed.debtList
+        path: listed.debtList,
+        permission: ['debtList']
       },
       {
         label: "Accountability",
-        path: listed.accountability
+        path: listed.accountability,
+        permission: ['accountability']
       },
       {
         label: "History",
-        path: listed.history
+        path: listed.history,
+        permission: ['history']
       },
      
     ],
+    permission: ['submissionList', 'debtList', 'accountability', 'history']
   },
   {
     label: 'Settings',
     path: '',
-    icon: '<FaGear />',
-    subMenu: true,
+    icon: '<FaGear />',   
     subLabel: [
       {
         label: "Users",
-        path: listed.user
+        path: listed.user,
+        permission: ['user']
       },
       {
         label: "Roles",
-        path: listed.roles
+        path: listed.roles,
+        permission: ['roles']
       },
       {
         label: "Permissions",
-        path: listed.submissionList
+        path: listed.submissionList,
+        permission: ['permissions']
       },
       {
         label: "Hierarchy",
-        path: listed.hirarky
+        path: listed.hirarky,
+        permission: ['hirarky']
       },
       {
         label: "Submission Setting",
-        path: listed.submissionList
+        path: listed.submissionList,
+        permission: ['submissionSetting']
       },
       {
         label: "Integrations",
-        path: listed.submissionList
+        path: listed.submissionList,
+        permission: ['integrations']
       },
      
     ],
+    permission: ['user', 'roles', 'permissions', 'hirarky', 'submissionSetting', 'integrations']
   },
  
  

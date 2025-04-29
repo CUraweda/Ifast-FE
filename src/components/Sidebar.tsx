@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { RiCloseLargeFill } from "react-icons/ri";
-import { iconMapping } from "./IconMapping";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { RiCloseLargeFill } from 'react-icons/ri';
+import { iconMapping } from './IconMapping';
+import { Link } from 'react-router-dom';
 
-import { sidebarList } from "@/constant/SidebarItem";
+import { sidebarList } from '@/constant/SidebarItem';
 
 interface Menu {
   label: string;
   path: string;
   icon: string;
-  subMenu: boolean;
   subLabel?: Subtitle[];
+  permission?: string[];
 }
 
 type Subtitle = {
- label: string;
+  label: string;
   path: string;
+  permission?: string[];
 };
 
 interface SidebarProps {
@@ -23,17 +24,23 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ logo }) => {
-  const Side = sessionStorage.getItem("side") || "/";
+  const Side = sessionStorage.getItem('side') || '/';
   const [data, setData] = useState<any[]>([]);
   const [activeMenuItem, setActiveMenuItem] = useState<string>(Side);
 
   const handleMenuItemClick = (name: string) => {
     setActiveMenuItem(name);
-    sessionStorage.setItem("side", name);
+    sessionStorage.setItem('side', name);
   };
 
   useEffect(() => {
-    setData(sidebarList)
+    setData(
+      sidebarList.filter((item) =>
+        item.permission?.some(
+          (permission) => sessionStorage.getItem(permission) === 'true'
+        )
+      )
+    );
   }, []);
 
   return (
@@ -61,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ logo }) => {
             <ul className="menu max-w-xs w-full text-base">
               {data.map((item: Menu, index: number) => (
                 <React.Fragment key={`menu-${index}`}>
-                  {item.subMenu ? (
+                  {item.subLabel && item.subLabel.length > 0 ? (
                     <li className="my-2">
                       <details>
                         <summary>
@@ -69,20 +76,24 @@ const Sidebar: React.FC<SidebarProps> = ({ logo }) => {
                           <a>{item.label}</a>
                         </summary>
                         <ul>
-                          {item.subLabel?.map((subItem: Subtitle, subIndex: number) => (
-                            <Link to={subItem.path} key={`link-${subIndex}`}>
-                              <li
-                                className={`my-2 transition duration-200 ${
-                                  activeMenuItem === subItem.path
-                                    ? "bg-base-200 font-bold rounded"
-                                    : ""
-                                }`}
-                                onClick={() => handleMenuItemClick(subItem.path)}
-                              >
-                                <p>{subItem.label}</p>
-                              </li>
-                            </Link>
-                          ))}
+                          {item.subLabel?.map(
+                            (subItem: Subtitle, subIndex: number) => (
+                              <Link to={subItem.path} key={`link-${subIndex}`}>
+                                <li
+                                  className={`my-2 transition duration-200 ${
+                                    activeMenuItem === subItem.path
+                                      ? 'bg-base-200 font-bold rounded'
+                                      : ''
+                                  }`}
+                                  onClick={() =>
+                                    handleMenuItemClick(subItem.path)
+                                  }
+                                >
+                                  <p>{subItem.label}</p>
+                                </li>
+                              </Link>
+                            )
+                          )}
                         </ul>
                       </details>
                     </li>
@@ -90,7 +101,9 @@ const Sidebar: React.FC<SidebarProps> = ({ logo }) => {
                     <Link to={item.path} key={`link-${index}`}>
                       <li
                         className={`my-2 transition duration-200 ${
-                          activeMenuItem === item.path ? "bg-base-200  rounded" : ""
+                          activeMenuItem === item.path
+                            ? 'bg-base-200  rounded'
+                            : ''
                         }`}
                         onClick={() => handleMenuItemClick(item.path)}
                       >
